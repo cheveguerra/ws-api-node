@@ -18,7 +18,7 @@ router.post('/sendmessage', async (req,res) => {
     console.log(message);
     console.log(phone);
 
-    if (phone == undefined || message == undefined) {
+    if (phone == undefined || message == undefined|| phone == 0 || message == empty) {
         res.send({ status:"error", message:"please enter valid phone and message" })
     } else {
         client.sendMessage(phone + '@c.us', message).then((response) => {
