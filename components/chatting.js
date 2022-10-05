@@ -29,7 +29,7 @@ router.post('/sendmessage', async (req,res) => {
     }
 });
 
-router.post('/sendimage/:phone', async (req,res) => {
+router.post('/sendimage/', async (req,res) => {
     var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
     let phone = req.body.phone;
