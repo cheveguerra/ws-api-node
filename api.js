@@ -25,6 +25,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 client.on("qr", (qr) => {
+  qrcode.generate(qr, { small: true });
   console.log("qr");
   fs.writeFileSync("./components/last.qr", qr);
 });
