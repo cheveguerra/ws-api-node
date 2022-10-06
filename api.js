@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const axios = require("axios");
 const shelljs = require("shelljs");
+const qrcode = require('qrcode-terminal');
 
 const config = require("./config.json");
 const { Client, LocalAuth } = require("whatsapp-web.js");
