@@ -65,6 +65,7 @@ client.on("message", async (msg) => {
 client.on("disconnected", () => {
   console.log("disconnected");
 });
+
 client.initialize();
 
 const chatRoute = require("./components/chatting");
