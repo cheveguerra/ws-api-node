@@ -40,6 +40,10 @@ client.on("authenticated", () => {
   } catch (err) {}
 });
 
+client.on('loading_screen', (percent, message) => {
+  console.log('LOADING SCREEN', percent, message);
+});
+
 client.on("auth_failure", () => {
   console.log("AUTH Failed !");
   process.exit();
