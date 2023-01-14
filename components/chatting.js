@@ -50,18 +50,21 @@ router.post('/sendimage/', async (req,res) => {
             if (!fs.existsSync('./temp')) {
                 await fs.mkdirSync('./temp');
             }
-
             var path = './temp/' + image.split("/").slice(-1)[0]
-            mediadownloader(image, path, () => {
-                let media = MessageMedia.fromFilePath(path);
-                
-                client.sendMessage(`${phone}@c.us`, media, { caption: caption || '' }).then((response) => {
-                    if (response.id.fromMe) {
-                        res.send({ status: 'success', message: `MediaMessage successfully sent to ${phone}` })
-                        fs.unlinkSync(path)
-                    }
-                });
-            })
+            if (fs.existsSync(path)){
+                mediadownloader(image, path, () => {
+                    let media = MessageMedia.fromFilePath(path);
+                    client.sendMessage(`${phone}@c.us`, media, { caption: caption || '' }).then((response) => {
+                        if (response.id.fromMe) {
+                            res.send({ status: 'success', message: `MediaMessage successfully sent to ${phone}` })
+                            fs.unlinkSync(path)
+                        }
+                    });
+                })
+            } else {
+                console.log("La imagen no existe o no se pudo descargar.")
+                res.send({ status:'error', message: 'Invalid URL/Base64 Encoded Media' })
+            }
         } else {
             res.send({ status:'error', message: 'Invalid URL/Base64 Encoded Media' })
         }
