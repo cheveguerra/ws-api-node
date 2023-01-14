@@ -9,6 +9,7 @@ const mediadownloader = (url, path, callback) => {
       request(url)
         .pipe(fs.createWriteStream(path))
         .on('close', callback)
+        .on('error', callback)
     })
   }
 
@@ -35,10 +36,14 @@ router.post('/sendimage/', async (req,res) => {
     let phone = req.body.phone;
     let image = req.body.image;
     let caption = req.body.caption;
+    let e = 0
 
     if (phone == undefined || image == undefined) {
         res.send({ status: "error", message: "please enter valid phone and base64/url of image" })
     } else {
+        if (!fs.existsSync('./temp')) {
+            await fs.mkdirSync('./temp');
+        }
         if (base64regex.test(image)) {
             let media = new MessageMedia('image/png',image);
             client.sendMessage(`${phone}@c.us`, media, { caption: caption || '' }).then((response) => {
@@ -47,12 +52,9 @@ router.post('/sendimage/', async (req,res) => {
                 }
             });
         } else if (vuri.isWebUri(image)) {
-            if (!fs.existsSync('./temp')) {
-                await fs.mkdirSync('./temp');
-            }
             var path = './temp/' + image.split("/").slice(-1)[0]
-            if (fs.existsSync(path)){
-                mediadownloader(image, path, () => {
+            mediadownloader(image, path, () => {
+                if(fs.existsSync(path)){
                     let media = MessageMedia.fromFilePath(path);
                     client.sendMessage(`${phone}@c.us`, media, { caption: caption || '' }).then((response) => {
                         if (response.id.fromMe) {
@@ -60,11 +62,13 @@ router.post('/sendimage/', async (req,res) => {
                             fs.unlinkSync(path)
                         }
                     });
-                })
-            } else {
-                console.log("La imagen no existe o no se pudo descargar.")
-                res.send({ status:'error', message: 'Invalid URL/Base64 Encoded Media' })
-            }
+                }
+                else
+                {
+                    if(e==1){res.send({ status:'error', message: 'Invalid URL/Base64 Encoded Media' })}
+                    e++ // Por alguna razon cuando hay error mediaDownloader corre 2 veces y se genera "Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client"
+                }
+            })
         } else {
             res.send({ status:'error', message: 'Invalid URL/Base64 Encoded Media' })
         }
