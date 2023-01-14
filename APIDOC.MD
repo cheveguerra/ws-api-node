@@ -8,9 +8,9 @@
 
 ## Chat
 <u>Sending Messages</u>
-``POST : /chat/sendmessage/<phone_number>``
-> Request Body
-> - message - contains the message to be sent
+``POST : /chat/sendmessage``
+> Request Body/Raw/JSON
+> - {"phone":"<phone_number>","message":"test2"}
 <hr>
 
 <u>Sending Images</u>
